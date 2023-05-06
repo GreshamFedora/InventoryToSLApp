@@ -16,8 +16,7 @@ const InventorySchema = new Schema({
 	},
 	location: {
 		type: String,
-		required: true
-
+		required: false
 	},
 	expires: {
 		type: String,
