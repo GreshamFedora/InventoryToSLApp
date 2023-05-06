@@ -6,11 +6,11 @@ POST http://localhost:3001/inventory/new
 Content-Type: application/json
 
 {
-    "item": "bread",
+    "item": "rice",
     "quantity": 3,
-    "units": "loaves",
+    "units": "lbs",
     "location": "Pantry",
-    "expires": "2023-05-10",    
+    "expires": "2023-07-10",    
 }
 
 ###
