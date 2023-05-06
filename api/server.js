@@ -17,56 +17,68 @@ mongoose.connect(process.env.MONGO_URI, {
     .catch(console.error);
 
     // Models
-const Todo = require('./models/Todo');
+const Inventory = require('./models/Inventory');
 
-    // todos REST HTTP methods
-app.get('/todos', async (req, res) => {
-	const todos = await Todo.find();
+    // inventory REST HTTP methods
+app.get('/inventory', async (req, res) => {
+	const inventory = await Inventory.find();
+  
+	res.json(inventory);
+  });
 
-	res.json(todos);
-});
-
-app.post('/todo/new', (req, res) => {
-	const todo = new Todo({
-		text: req.body.text
+  
+  app.post('/inventory/new', (req, res) => {
+	//console.log(req.body);
+	const inventory = new Inventory({
+		item: req.body.item,
+		quantity: req.body.quantity,
+		units: req.body.units,
+		location: req.body.location,
+		expires: req.body.expires,
 	})
     //saves to actual collection
-	todo.save();
+	inventory.save();
 
-	res.json(todo);
+	res.json(inventory);
 });
 
-app.delete('/todo/delete/:id', async (req, res) => {
-	const todoExists = await Todo.exists({ _id: req.params.id });
+
+app.delete('/inventory/delete/:id', async (req, res) => {
+	const resultExists = await Inventory.exists({ _id: req.params.id });
 	
-	if (!todoExists) {
-		return res.status(404).json({ error: 'Todo not found' });
+	if (!resultExists) {
+		return res.status(404).json({ error: 'Item not found' });
 	}
 	
-	const result = await Todo.findByIdAndDelete(req.params.id);
+	const result = await Inventory.findByIdAndDelete(req.params.id);
 
-	res.json({result});
+	res.json({ result });
 });
 
 
-app.get('/todo/complete/:id', async (req, res) => {
-	const todo = await Todo.findById(req.params.id);
+app.get('/inventory/complete/:id', async (req, res) => {
+	const inventory = await Inventory.findById(req.params.id);
+  
+	inventory.complete = !inventory.complete;
 
-	todo.complete = !todo.complete;
+	inventory.save();
 
-	todo.save();
+	res.json(inventory);
+  });
 
-	res.json(todo);
-})
 
-app.put('/todo/update/:id', async (req, res) => {
-	const todo = await Todo.findById(req.params.id);
+app.put('/inventory/update/:id', async (req, res) => {
+	const inventory = await Inventory.findById(req.params.id);
 
-	todo.text = req.body.text;
+	inventory.item = req.body.item;
+	inventory.quantity = req.body.quantity;
+	inventory.units = req.body.units;
+	inventory.location = req.body.location;
+	inventory.expires = req.body.expires;
 
-	todo.save();
+	inventory.save();
 
-	res.json(todo);
+	res.json(inventory);
 });
 
     app.listen(3001);

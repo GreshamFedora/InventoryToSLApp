@@ -1,16 +1,20 @@
-GET http://localhost:3001/todos
+GET http://localhost:3001/inventory
 
 ###
 
-POST http://localhost:3001/todo/new
+POST http://localhost:3001/inventory/new
 Content-Type: application/json
 
 {
-    "text": "Order pizza"
+    "item": "bread",
+    "quantity": 3,
+    "units": "loaves",
+    "location": "Pantry",
+    "expires": "2023-05-10",    
 }
 
 ###
-DELETE http://localhost:3001/todo/delete/6453cf080d5416c64416bccb
+DELETE http://localhost:3001/inventory/delete/64551f5d9bdaf12b353ea4a4
 
 ###
-PUT http://localhost:3001/todo/complete/6453cf220d5416c64416bccd
+PUT http://localhost:3001/inventory/complete/6453cf220d5416c64416bccd
