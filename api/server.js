@@ -100,9 +100,9 @@ app.post('/shoppingList/new', async (req, res) => {
 	});
 	
 	
-	const savedShoppingListItem = await shoppingList.save();
+	shoppingList.save();
 	
-	res.json(savedShoppingListItem);
+	res.json(shoppingList);
 });
 /*
 app.post('/shoppingList/new', (req, res) => {
