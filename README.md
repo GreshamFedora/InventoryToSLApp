@@ -1,3 +1,7 @@
+Optimizations:
+store and price data so that you can enter where you got it & @ what price & save that data --> drop-down list for the stores so that you can sort and have them grouped together
+--> ShoppingList to be used later to keep track of stores and pricing data (Obj w array for dates & another for price data)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
