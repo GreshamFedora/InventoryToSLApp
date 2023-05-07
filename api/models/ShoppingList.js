@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const InventorySchema = new Schema({
-	item: {
+const ShoppingListSchema = new Schema({
+    item: {
 		type: String,
 		required: true
 	},
@@ -32,6 +32,7 @@ const InventorySchema = new Schema({
 	}
 });
 
-const Inventory = mongoose.model("Inventory", InventorySchema);
 
-module.exports = Inventory;
+const ShoppingList = mongoose.model("ShoppingList", ShoppingListSchema);
+
+module.exports = ShoppingList;

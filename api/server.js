@@ -18,6 +18,7 @@ mongoose.connect(process.env.MONGO_URI, {
 
     // Models
 const Inventory = require('./models/Inventory');
+const ShoppingList = require('./models/ShoppingList');
 
     // inventory REST HTTP methods
 app.get('/inventory', async (req, res) => {
@@ -79,6 +80,23 @@ app.put('/inventory/update/:id', async (req, res) => {
 	inventory.save();
 
 	res.json(inventory);
+});
+
+//ShoppingList REST HTTP Methods
+
+app.post('/shoppingList/new', (req, res) => {
+	//console.log(req.body);
+	const shoppingList = new ShoppingList({
+		item: req.body.item,
+		quantity: req.body.quantity,
+		units: req.body.units,
+		location: req.body.location,
+		expires: req.body.expires,
+	})
+    //saves to actual collection
+	shoppingList.save();
+
+	res.json(shoppingList);
 });
 
     app.listen(3001);
