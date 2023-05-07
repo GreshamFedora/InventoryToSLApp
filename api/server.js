@@ -83,9 +83,29 @@ app.put('/inventory/update/:id', async (req, res) => {
 });
 
 //ShoppingList REST HTTP Methods
+app.get('/shoppingList', async (req, res) => {
+	const shoppingList = await ShoppingList.find();
+  
+	res.json(shoppingList);
+});
 
+
+app.post('/shoppingList/new', async (req, res) => {
+	const shoppingList = new ShoppingList({
+		item: req.body.item,
+		quantity: req.body.quantity,
+		units: req.body.units,
+		location: req.body.location,
+		expires: req.body.expires,
+	});
+	
+	
+	const savedShoppingListItem = await shoppingList.save();
+	
+	res.json(savedShoppingListItem);
+});
+/*
 app.post('/shoppingList/new', (req, res) => {
-	//console.log(req.body);
 	const shoppingList = new ShoppingList({
 		item: req.body.item,
 		quantity: req.body.quantity,
@@ -93,10 +113,48 @@ app.post('/shoppingList/new', (req, res) => {
 		location: req.body.location,
 		expires: req.body.expires,
 	})
-    //saves to actual collection
+    
 	shoppingList.save();
 
 	res.json(shoppingList);
 });
+*/
+
+app.delete('/shoppingList/delete/:id', async (req, res) => {
+	const resultExists = await ShoppingList.exists({ _id: req.params.id });
+	
+	if (!resultExists) {
+		return res.status(404).json({ error: 'Item not found' });
+	}
+	
+	const result = await ShoppingList.findByIdAndDelete(req.params.id);
+
+	res.json({ result });
+});
+
+app.get('/shoppingList/complete/:id', async (req, res) => {
+	const shoppingList = await ShoppingList.findById(req.params.id);
+  
+	shoppingList.complete = !shoppingList.complete;
+
+	shoppingList.save();
+
+	res.json(shoppingList);
+});
+
+app.put('/shoppingList/update/:id', async (req, res) => {
+	const shoppingList = await ShoppingList.findById(req.params.id);
+
+	shoppingList.item = req.body.item;
+	shoppingList.quantity = req.body.quantity;
+	shoppingList.units = req.body.units;
+	shoppingList.location = req.body.location;
+	shoppingList.expires = req.body.expires;
+
+	shoppingList.save();
+
+	res.json(shoppingList);
+});
+
 
     app.listen(3001);
