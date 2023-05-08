@@ -116,21 +116,7 @@ app.post('/shoppingList/new', async (req, res) => {
 	
 	res.json(shoppingList);
 });
-/*
-app.post('/shoppingList/new', (req, res) => {
-	const shoppingList = new ShoppingList({
-		item: req.body.item,
-		quantity: req.body.quantity,
-		units: req.body.units,
-		location: req.body.location,
-		expires: req.body.expires,
-	})
-    
-	shoppingList.save();
 
-	res.json(shoppingList);
-});
-*/
 
 app.delete('/shoppingList/delete/:id', async (req, res) => {
 	const resultExists = await ShoppingList.exists({ _id: req.params.id });
