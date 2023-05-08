@@ -67,7 +67,7 @@ const InventoryView = () => {
         setEditingItemId(item)
         const itemToFind = item
         const itemToEdit = inventory.find(item => item._id === itemToFind)
-        console.log(itemToEdit)
+        //console.log(itemToEdit)
         
         const formValues = {
             item: itemToEdit.item,
@@ -242,7 +242,7 @@ const InventoryView = () => {
                 </form>
             {/*<button className="actionButtons transferButton" onClick={handleSubmit}>Transfer</button>*/}
             
-            <h3>Add Item to Inventory</h3>
+            <h3>Add an Item to your Inventory</h3>
             <form className="container" onSubmit={addInventoryItem}>            
                 <input type="text" placeholder="Item" value={newItem} onChange={e => setNewItem(e.target.value)} />
                 <input type="number" placeholder="Qty" value={newQty} onChange={e => setNewQty(e.target.value)} />

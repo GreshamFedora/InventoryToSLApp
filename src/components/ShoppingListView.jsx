@@ -1,7 +1,7 @@
 import { useState, useEffect, Fragment } from "react";
 //import ReadOnlyRow from "./components/ReadOnlyRow";
 //import EditableRow from "./components/EditableRow";
-import { ReadOnlyRow, EditableRow} from './';
+import { ShoppingReadOnlyRow, EditableRow} from './';
 const api_base = "http://localhost:3001";
 
 const ShoppingListView = () => {
@@ -26,20 +26,20 @@ const ShoppingListView = () => {
 
 
     useEffect(() => {
-        GetInventory();        
+        GetShoppingList();        
     }, [])
 
-    const GetInventory = () => {
-        fetch(api_base + "/inventory")
+    const GetShoppingList = () => {
+        fetch(api_base + "/shoppingList")
             .then(res => res.json())
-            .then(data => setInventory(data))
+            .then(data => setShoppingList(data))
             .catch(err => console.error("Error: ", err));
     }
     
-    const addInventoryItem = async (e)  => {
+    const addShoppingItem = async (e)  => {
         e.preventDefault();
 
-        const data = await fetch(api_base + "/inventory/new", {
+        const data = await fetch(api_base + "/shoppingList/new", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -53,7 +53,7 @@ const ShoppingListView = () => {
             })
         }).then(res => res.json());
 
-        setInventory([...inventory, data])
+        setShoppingList([...shoppingList, data])
         setNewItem("");
         setNewQty("");
         setNewUnits("");
@@ -66,7 +66,7 @@ const ShoppingListView = () => {
         //item here = item._id
         setEditingItemId(item)
         const itemToFind = item
-        const itemToEdit = inventory.find(item => item._id === itemToFind)
+        const itemToEdit = shoppingList.find(item => item._id === itemToFind)
         console.log(itemToEdit)
         
         const formValues = {
@@ -103,7 +103,7 @@ const ShoppingListView = () => {
             expires: editFormData.expires,
         }
     try {
-        const res = await fetch(api_base + `/inventory/update/${editingItemId}`, {
+        const res = await fetch(api_base + `/shoppingList/update/${editingItemId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -116,10 +116,10 @@ const ShoppingListView = () => {
 
         // Update state with edited data
         const updatedData = await res.json();
-        const newItem = [...inventory];
-        const index = inventory.findIndex((item) => item._id === updatedData._id);
+        const newItem = [...shoppingList];
+        const index = shoppingList.findIndex((item) => item._id === updatedData._id);
         newItem[index] = updatedData;
-        setInventory(newItem);
+        setShoppingList(newItem);
         setEditingItemId(null);
 
     } catch (e) {
@@ -128,9 +128,9 @@ const ShoppingListView = () => {
 
     // Fetch updated data
     try {
-        const res = await fetch(api_base + "/inventory");
+        const res = await fetch(api_base + "/shoppingList");
         const data = await res.json();
-        setInventory(data);
+        setShoppingList(data);
     } catch (e) {
         console.log(e);
     }
@@ -141,24 +141,24 @@ const ShoppingListView = () => {
     }
     
 
-    const deleteInventoryItem = async (e, item) => {
+    const deleteShoppingItem = async (e, item) => {
         e.preventDefault();
         
-        const data = await fetch(api_base + '/inventory/delete/' + item, {
+        const data = await fetch(api_base + '/shoppingList/delete/' + item, {
             method: "DELETE"
         }).then(res => res.json());
 
-        setInventory(inventory => inventory.filter(item => item._id !== data.result._id))
+        setShoppingList(shoppingList => shoppingList.filter(item => item._id !== data.result._id))
         
         e.stopPropagation();
         
     }
 
-    const completeInventoryItem = async (id) => {
-        const data = await fetch(api_base + "/inventory/complete/" + id)
+    const completeShoppingItem = async (id) => {
+        const data = await fetch(api_base + "/shoppingList/complete/" + id)
             .then(res => res.json());
 
-            setInventory(inventory => inventory.map(item => {
+            setShoppingList(shoppingList => shoppingList.map(item => {
                 if(item._id === data._id) {
                     item.complete = data.complete;
                 }
@@ -167,7 +167,7 @@ const ShoppingListView = () => {
             }));
     }
  
-  const addToList = async (e)  => {
+  const addToListAndDelete = async (e)  => {
     e.preventDefault();
 
  
@@ -178,15 +178,15 @@ const ShoppingListView = () => {
     const location = itemRow.children[3].textContent;
     const expires = itemRow.children[4].textContent;
   
-    const shoppingList = await fetch(api_base + "/shoppingList")
+    const inventory = await fetch(api_base + "/inventory")
     .then(res => res.json());
 
   // Check if the item already exists in the shopping list
-  const itemExists = shoppingList.some(listItem => listItem.item === item);
+  const itemExists = inventory.some(listItem => listItem.item === item);
 
   if (!itemExists) {
     // Add the item to the shopping list if it doesn't already exist
-    const data = await fetch(api_base + "/shoppingList/new", {
+    const data = await fetch(api_base + "/inventory/new", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -204,12 +204,33 @@ const ShoppingListView = () => {
   } else {
     setAlreadyAdded(true);
   }
-}
+
+  const fetchShoppingList = async () => {
+    const res = await fetch(api_base + "/shoppingList");
+    const data = await res.json();
+    return data;
+  };
+  const shoppingList = await fetchShoppingList();
+
+    
+  const nameOfItemToDelete = item
+  
+  const itemToDelete = shoppingList.find(item => item.item === nameOfItemToDelete)
+  //console.log(itemToDelete._id)
+  const deleteResponse = await fetch(api_base + "/shoppingList/delete/" + itemToDelete._id, {
+    method: "DELETE",
+  }).then(res => res.json());
+
+  setShoppingList(shoppingList => shoppingList.filter(item => item._id !== deleteResponse.result._id))
+  
+  e.stopPropagation();
+};
+
   
 	return (
         <div className="App app-container">
             <h1>Welcome</h1>
-            <h4>Inventory</h4>
+            <h4>Shopping List</h4>
                 <form>
                     <table>
                         <thead>
@@ -224,17 +245,17 @@ const ShoppingListView = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {inventory.length > 0 ? inventory.map(item => (
+                            {shoppingList.length > 0 ? shoppingList.map(item => (
                                 <Fragment key={item._id}>
                                     {editingItemId === item._id ? (
                                         <EditableRow item={item} cancelEditing={cancelEditing} editedItem={editedItem} setEditedItem={setEditedItem} editFormData={editFormData} handleEditFormChange={handleEditFormChange} handleEditFormSubmit={handleEditFormSubmit}/> 
                                     ) : (
-                                        <ReadOnlyRow item={item} handleEditClick={handleEditClick} deleteInventoryItem={deleteInventoryItem} addToList={addToList} isAdded={isAdded} alreadyAdded={alreadyAdded}/>
+                                        <ShoppingReadOnlyRow item={item} handleEditClick={handleEditClick} deleteShoppingItem={deleteShoppingItem} addToListAndDelete={addToListAndDelete} isAdded={isAdded} alreadyAdded={alreadyAdded}/>
                                     )}
                                 </Fragment>
                             )) : (
                                 <tr>
-                                    <td colSpan="8">You currently have no items in inventory</td>
+                                    <td colSpan="8">You currently have no items on your shopping list</td>
                                 </tr>
                             )}
                         </tbody>
@@ -242,8 +263,8 @@ const ShoppingListView = () => {
                 </form>
             {/*<button className="actionButtons transferButton" onClick={handleSubmit}>Transfer</button>*/}
             
-            <h3>Add Item to Inventory</h3>
-            <form className="container" onSubmit={addInventoryItem}>            
+            <h3>Add an Item to your Shopping List</h3>
+            <form className="container" onSubmit={addShoppingItem}>            
                 <input type="text" placeholder="Item" value={newItem} onChange={e => setNewItem(e.target.value)} />
                 <input type="number" placeholder="Qty" value={newQty} onChange={e => setNewQty(e.target.value)} />
                 <input type="text" placeholder="Units" value={newUnits} onChange={e => setNewUnits(e.target.value)} />
